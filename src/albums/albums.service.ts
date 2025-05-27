@@ -4,12 +4,14 @@ import { CreateAlbumDto } from './dtos/album.create.dto';
 import { Album } from './entities/album.entity';
 import { UpdateAlbumDto } from './dtos/album.update.dto';
 import { AlbumFactory } from './album.factory';
+import { TracksRepository } from '../tracks/tracks.repository';
 
 @Injectable()
 export class AlbumsService {
   constructor(
     private readonly albumFactory: AlbumFactory,
     private readonly albumsRepository: AlbumsRepository,
+    private readonly tracksRepository: TracksRepository,
   ) {}
 
   public createAlbum(createAlbumDto: CreateAlbumDto): Album {
@@ -22,6 +24,8 @@ export class AlbumsService {
 
   public deleteAlbum(albumId: string): void {
     this.albumsRepository.delete(albumId);
+
+    this.deleteAlbumRelations(albumId);
   }
 
   public getAlbum(albumId: string): Album {
@@ -36,5 +40,13 @@ export class AlbumsService {
     const album = this.albumsRepository.findById(albumId);
 
     return this.albumsRepository.update(album, updateAlbumDto);
+  }
+
+  private deleteAlbumRelations(albumId: string) {
+    this.tracksRepository.tracks.map((track) => {
+      if (track.albumId === albumId) {
+        track.albumId = null;
+      }
+    });
   }
 }

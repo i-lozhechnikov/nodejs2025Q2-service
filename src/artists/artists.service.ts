@@ -4,12 +4,16 @@ import { Artist } from './entities/artists.entity';
 import { CreateArtistDto } from './dtos/artist.create.dto';
 import { UpdateArtistDto } from './dtos/artist.update.dto';
 import { ArtistFactory } from './artist.factory';
+import { TracksRepository } from '../tracks/tracks.repository';
+import { AlbumsRepository } from '../albums/albums.repository';
 
 @Injectable()
 export class ArtistsService {
   constructor(
     private readonly artistFactory: ArtistFactory,
     private readonly artistsRepository: ArtistsRepository,
+    private readonly tracksRepository: TracksRepository,
+    private readonly albumsRepository: AlbumsRepository,
   ) {}
 
   public createArtist(createArtistDto: CreateArtistDto): Artist {
@@ -22,6 +26,8 @@ export class ArtistsService {
 
   public deleteArtist(artistId: string): void {
     this.artistsRepository.delete(artistId);
+
+    this.deleteArtistRelations(artistId);
   }
 
   public getArtist(artistId: string): Artist {
@@ -39,5 +45,19 @@ export class ArtistsService {
     const artist = this.artistsRepository.findById(artistId);
 
     return this.artistsRepository.update(artist, updateArtistDto);
+  }
+
+  private deleteArtistRelations(artistId: string) {
+    this.tracksRepository.tracks.map((track) => {
+      if (track.artistId === artistId) {
+        track.artistId = null;
+      }
+    });
+
+    this.albumsRepository.albums.map((album) => {
+      if (album.artistId === artistId) {
+        album.artistId = null;
+      }
+    });
   }
 }

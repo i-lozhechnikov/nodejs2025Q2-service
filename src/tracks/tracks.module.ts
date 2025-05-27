@@ -14,5 +14,6 @@ import { IsTrackExistsConstraint } from './validators/track.exists.validator.con
     TracksService,
     IsTrackExistsConstraint,
   ],
+  exports: [TracksRepository],
 })
 export class TracksModule {}

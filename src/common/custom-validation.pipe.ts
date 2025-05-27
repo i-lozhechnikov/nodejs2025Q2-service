@@ -26,7 +26,7 @@ export class CustomValidationPipe extends ValidationPipe {
           badRequestMessages.push(message);
         }
 
-        if (notFoundMessages.length > 0) {
+        if (badRequestMessages.length === 0 && notFoundMessages.length > 0) {
           return new NotFoundException(notFoundMessages);
         }
 
