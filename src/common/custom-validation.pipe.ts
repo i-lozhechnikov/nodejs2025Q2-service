@@ -11,23 +11,24 @@ import {
 export class CustomValidationPipe extends ValidationPipe {
   constructor(options?: ValidationPipeOptions) {
     super({
+      ...options,
       exceptionFactory: (errors: ValidationError[]) => {
         const messages = CustomValidationPipe.flattenValidationErrors(errors);
 
         const badRequestMessages = [];
+        const notFoundMessages = [];
         for (const message of messages) {
           if (message.includes('not found.')) {
-            if (messages.length === 1) {
-              return new NotFoundException(message);
-            }
-
+            notFoundMessages.push(message);
             continue;
           }
 
           badRequestMessages.push(message);
         }
 
-        console.log(badRequestMessages);
+        if (notFoundMessages.length > 0) {
+          return new NotFoundException(notFoundMessages);
+        }
 
         return new BadRequestException(badRequestMessages);
       },
