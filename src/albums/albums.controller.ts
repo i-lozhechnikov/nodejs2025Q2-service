@@ -12,7 +12,7 @@ import {
 } from '@nestjs/common';
 import { AlbumsService } from './albums.service';
 import { CreateAlbumDto } from './dtos/album.create.dto';
-import { AlbumIdParamDto } from './dtos/artist.id-param.dto';
+import { AlbumIdParamDto } from './dtos/album.id-param.dto';
 import { Album } from './entities/album.entity';
 import { UpdateAlbumDto } from './dtos/album.update.dto';
 

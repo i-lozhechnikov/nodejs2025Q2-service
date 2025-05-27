@@ -52,6 +52,7 @@ export class UsersService {
       updateUserPasswordDto,
     );
     updatedUser.version++;
+    updatedUser.setUpdatedAt();
 
     return this.mapToUserDto(updatedUser);
   }

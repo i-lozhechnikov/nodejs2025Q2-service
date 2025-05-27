@@ -5,7 +5,7 @@ export class User {
 
   public password: string;
 
-  public version: number = 0;
+  public version: number = 1;
 
   public createdAt: number;
 
