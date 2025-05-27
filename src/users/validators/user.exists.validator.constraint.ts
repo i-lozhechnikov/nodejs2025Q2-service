@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import {
   ValidationArguments,
   ValidatorConstraint,
@@ -18,13 +18,7 @@ export class IsUserExistsConstraint implements ValidatorConstraintInterface {
   ): Promise<boolean> {
     const userId = validationArguments?.object as UserIdParamDto;
 
-    const isUserExists = this.usersRepository.isUserExists(userId.id);
-
-    if (!isUserExists) {
-      throw new NotFoundException(this.defaultMessage(validationArguments));
-    }
-
-    return true;
+    return !!this.usersRepository.isUserExists(userId.id);
   }
 
   public defaultMessage(_validationArguments: ValidationArguments): string {

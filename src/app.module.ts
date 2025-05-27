@@ -3,9 +3,11 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { UsersModule } from './users/users.module';
 import { ConfigModule } from '@nestjs/config';
+import { ArtistsModule } from './artists/artists.module';
 
 @Module({
   imports: [
+    ArtistsModule,
     UsersModule,
     ConfigModule.forRoot({
       isGlobal: true,
