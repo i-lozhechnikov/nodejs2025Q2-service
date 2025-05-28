@@ -19,11 +19,6 @@ import { ParamAs } from '../common/param-as.decorator';
 export class FavoritesController {
   constructor(private readonly favoritesService: FavoritesService) {}
 
-  @Get()
-  public getFavorites(): FavoritesResponse {
-    return this.favoritesService.getFavorites();
-  }
-
   @Post('/album/:id')
   @HttpCode(HttpStatus.CREATED)
   public addAlbum(
@@ -78,5 +73,10 @@ export class FavoritesController {
     favoriteTrackIdParamDto: FavoriteTrackIdParamDto,
   ): void {
     return this.favoritesService.deleteTrack(favoriteTrackIdParamDto.trackId);
+  }
+
+  @Get()
+  public getFavorites(): FavoritesResponse {
+    return this.favoritesService.getFavorites();
   }
 }

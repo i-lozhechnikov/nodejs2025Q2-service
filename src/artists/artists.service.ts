@@ -6,14 +6,16 @@ import { UpdateArtistDto } from './dtos/artist.update.dto';
 import { ArtistFactory } from './artist.factory';
 import { TracksRepository } from '../tracks/tracks.repository';
 import { AlbumsRepository } from '../albums/albums.repository';
+import { FavoritesRepository } from '../favorites/favorites.repository';
 
 @Injectable()
 export class ArtistsService {
   constructor(
+    private readonly albumsRepository: AlbumsRepository,
     private readonly artistFactory: ArtistFactory,
     private readonly artistsRepository: ArtistsRepository,
     private readonly tracksRepository: TracksRepository,
-    private readonly albumsRepository: AlbumsRepository,
+    private readonly favoritesRepository: FavoritesRepository,
   ) {}
 
   public createArtist(createArtistDto: CreateArtistDto): Artist {
@@ -59,5 +61,10 @@ export class ArtistsService {
         album.artistId = null;
       }
     });
+
+    this.favoritesRepository.favorites.artists =
+      this.favoritesRepository.favorites.artists.filter(
+        (artist) => artist !== artistId,
+      );
   }
 }

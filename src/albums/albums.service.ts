@@ -5,12 +5,14 @@ import { Album } from './entities/album.entity';
 import { UpdateAlbumDto } from './dtos/album.update.dto';
 import { AlbumFactory } from './album.factory';
 import { TracksRepository } from '../tracks/tracks.repository';
+import { FavoritesRepository } from '../favorites/favorites.repository';
 
 @Injectable()
 export class AlbumsService {
   constructor(
     private readonly albumFactory: AlbumFactory,
     private readonly albumsRepository: AlbumsRepository,
+    private readonly favoritesRepository: FavoritesRepository,
     private readonly tracksRepository: TracksRepository,
   ) {}
 
@@ -48,5 +50,10 @@ export class AlbumsService {
         track.albumId = null;
       }
     });
+
+    this.favoritesRepository.favorites.albums =
+      this.favoritesRepository.favorites.albums.filter(
+        (album) => album !== albumId,
+      );
   }
 }

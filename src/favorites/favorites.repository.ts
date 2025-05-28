@@ -11,19 +11,19 @@ export class FavoritesRepository {
 
   public addAlbum(albumId: string): void {
     if (!this.favorites.albums.find((album) => album === albumId)) {
-      this.favorites.albums.push();
+      this.favorites.albums.push(albumId);
     }
   }
 
   public addArtist(artistId: string): void {
     if (!this.favorites.artists.find((artist) => artist === artistId)) {
-      this.favorites.artists.push();
+      this.favorites.artists.push(artistId);
     }
   }
 
   public addTrack(trackId: string): void {
     if (!this.favorites.tracks.find((track) => track === trackId)) {
-      this.favorites.tracks.push();
+      this.favorites.tracks.push(trackId);
     }
   }
 
@@ -53,7 +53,7 @@ export class FavoritesRepository {
     );
 
     if (trackIndex !== -1) {
-      this.favorites.artists.splice(trackIndex, 1);
+      this.favorites.tracks.splice(trackIndex, 1);
     }
   }
 

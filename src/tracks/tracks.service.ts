@@ -5,10 +5,12 @@ import { TracksRepository } from './tracks.repository';
 import { CreateTrackDto } from './dtos/track.create.dto';
 import { UpdateTrackDto } from './dtos/track.update.dto';
 import { Track } from './entities/track.entity';
+import { FavoritesRepository } from '../favorites/favorites.repository';
 
 @Injectable()
 export class TracksService {
   constructor(
+    private readonly favoritesRepository: FavoritesRepository,
     private readonly trackFactory: TrackFactory,
     private readonly tracksRepository: TracksRepository,
   ) {}
@@ -23,6 +25,8 @@ export class TracksService {
 
   public deleteTrack(trackId: string): void {
     this.tracksRepository.delete(trackId);
+
+    this.deleteTrackRelations(trackId);
   }
 
   public getTrack(trackId: string): Track {
@@ -37,5 +41,12 @@ export class TracksService {
     const track = this.tracksRepository.findById(trackId);
 
     return this.tracksRepository.update(track, updateTrackDto);
+  }
+
+  private deleteTrackRelations(trackId: string) {
+    this.favoritesRepository.favorites.tracks =
+      this.favoritesRepository.favorites.tracks.filter(
+        (track) => track !== trackId,
+      );
   }
 }
