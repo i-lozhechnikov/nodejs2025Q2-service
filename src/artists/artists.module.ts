@@ -16,5 +16,6 @@ import { TracksModule } from '../tracks/tracks.module';
     ArtistsService,
     IsArtistExistsConstraint,
   ],
+  exports: [ArtistsRepository, IsArtistExistsConstraint],
 })
 export class ArtistsModule {}

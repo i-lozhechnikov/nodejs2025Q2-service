@@ -15,6 +15,6 @@ import { TracksModule } from '../tracks/tracks.module';
     AlbumsService,
     IsAlbumExistsConstraint,
   ],
-  exports: [AlbumsRepository],
+  exports: [AlbumsRepository, IsAlbumExistsConstraint],
 })
 export class AlbumsModule {}
