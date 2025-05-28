@@ -15,8 +15,6 @@ export class CustomValidationPipe extends ValidationPipe {
     super({
       ...options,
       exceptionFactory: (errors: ValidationError[]) => {
-        const messages = CustomValidationPipe.flattenValidationErrors(errors);
-
         const badRequestMessages = [];
         const notFoundMessages = [];
         const unprocessableEntityMessages = [];
