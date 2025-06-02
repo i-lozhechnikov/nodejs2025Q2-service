@@ -1,60 +1,64 @@
 import { Injectable } from '@nestjs/common';
-import { UsersRepository } from './users.repository';
 import { UserDto } from './dtos/user.dto';
 import { UserFactory } from './user.factory';
 import { User } from './entities/user.entity';
 import { CreateUserDto } from './dtos/user.create.dto';
 import { UpdatePasswordDto } from './dtos/user.update.password.dto';
 import { PasswordMatchValidator } from './validators/users.password-match.validator';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
 
 @Injectable()
 export class UsersService {
   constructor(
     private readonly userFactory: UserFactory,
-    private readonly usersRepository: UsersRepository,
+    @InjectRepository(User)
+    private readonly usersRepository: Repository<User>,
   ) {}
 
-  public createUser(createUserDto: CreateUserDto): UserDto {
+  public async createUser(createUserDto: CreateUserDto): Promise<UserDto> {
     const user = this.userFactory.create(createUserDto);
 
-    this.usersRepository.create(user);
+    await this.usersRepository.save(user);
 
     return this.mapToUserDto(user);
   }
 
-  public deleteUser(userId: string): void {
-    this.usersRepository.delete(userId);
+  public async deleteUser(userId: string): Promise<void> {
+    await this.usersRepository.delete(userId);
   }
 
-  public getUser(userId: string): UserDto {
-    const user = this.usersRepository.findById(userId);
+  public async getUser(userId: string): Promise<UserDto> {
+    const user = await this.usersRepository.findOneBy({
+      id: userId,
+    });
 
     return this.mapToUserDto(user);
   }
 
-  public getUsers(): User[] {
-    return this.usersRepository.findAll();
+  public async getUsers(): Promise<User[]> {
+    return await this.usersRepository.find();
   }
 
-  public updateUserPassword(
+  public async updateUserPassword(
     userId: string,
     updateUserPasswordDto: UpdatePasswordDto,
-  ): UserDto {
-    const user = this.usersRepository.findById(userId);
+  ): Promise<UserDto> {
+    const user = await this.usersRepository.findOneBy({
+      id: userId,
+    });
 
     PasswordMatchValidator.isPasswordMatch(
       user,
       updateUserPasswordDto.oldPassword,
     );
 
-    const updatedUser = this.usersRepository.update(
-      user,
-      updateUserPasswordDto,
-    );
-    updatedUser.version++;
-    updatedUser.setUpdatedAt();
+    user.password = updateUserPasswordDto.newPassword;
+    user.version++;
 
-    return this.mapToUserDto(updatedUser);
+    await this.usersRepository.save(user);
+
+    return this.mapToUserDto(user);
   }
 
   private mapToUserDto(user: User): UserDto {
