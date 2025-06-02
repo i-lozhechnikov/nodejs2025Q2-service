@@ -3,21 +3,23 @@ import { Artist } from './entities/artists.entity';
 import { CreateArtistDto } from './dtos/artist.create.dto';
 import { UpdateArtistDto } from './dtos/artist.update.dto';
 import { ArtistFactory } from './artist.factory';
-import { TracksRepository } from '../tracks/tracks.repository';
-import { AlbumsRepository } from '../albums/albums.repository';
-import { FavoritesRepository } from '../favorites/favorites.repository';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import { Album } from '../albums/entities/album.entity';
+import { Track } from '../tracks/entities/track.entity';
+import { FavoritesService } from '../favorites/favorites.service';
 
 @Injectable()
 export class ArtistsService {
   constructor(
-    private readonly albumsRepository: AlbumsRepository,
+    @InjectRepository(Album)
+    private readonly albumsRepository: Repository<Album>,
     private readonly artistFactory: ArtistFactory,
     @InjectRepository(Artist)
     private readonly artistsRepository: Repository<Artist>,
-    private readonly tracksRepository: TracksRepository,
-    private readonly favoritesRepository: FavoritesRepository,
+    @InjectRepository(Track)
+    private readonly tracksRepository: Repository<Track>,
+    private readonly favoritesService: FavoritesService,
   ) {}
 
   public async createArtist(createArtistDto: CreateArtistDto): Promise<Artist> {
@@ -31,7 +33,7 @@ export class ArtistsService {
   public async deleteArtist(artistId: string): Promise<void> {
     await this.artistsRepository.delete(artistId);
 
-    this.deleteArtistRelations(artistId);
+    await this.deleteArtistRelations(artistId);
   }
 
   public async getArtist(artistId: string): Promise<Artist> {
@@ -54,22 +56,37 @@ export class ArtistsService {
     return this.artistsRepository.save(artist);
   }
 
-  private deleteArtistRelations(artistId: string) {
-    this.tracksRepository.tracks.map((track) => {
-      if (track.artistId === artistId) {
-        track.artistId = null;
-      }
+  private async deleteArtistRelations(artistId: string) {
+    const tracks = await this.tracksRepository.find({
+      where: {
+        artistId: artistId,
+      },
     });
 
-    this.albumsRepository.albums.map((album) => {
-      if (album.artistId === artistId) {
-        album.artistId = null;
-      }
+    for (const track of tracks) {
+      track.artistId = null;
+
+      await this.tracksRepository.save(track);
+    }
+
+    const albums = await this.albumsRepository.find({
+      where: {
+        artistId: artistId,
+      },
     });
 
-    this.favoritesRepository.favorites.artists =
-      this.favoritesRepository.favorites.artists.filter(
-        (artist) => artist !== artistId,
-      );
+    for (const album of albums) {
+      album.artistId = null;
+
+      await this.albumsRepository.save(album);
+    }
+
+    const favorites = await this.favoritesService.getFavoritesFromDb();
+
+    favorites.artists = favorites.artists.filter(
+      (artist) => artist !== artistId,
+    );
+
+    await this.favoritesService.saveFavorites(favorites);
   }
 }

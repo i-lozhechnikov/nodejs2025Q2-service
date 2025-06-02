@@ -3,10 +3,10 @@ import { CreateAlbumDto } from './dtos/album.create.dto';
 import { Album } from './entities/album.entity';
 import { UpdateAlbumDto } from './dtos/album.update.dto';
 import { AlbumFactory } from './album.factory';
-import { TracksRepository } from '../tracks/tracks.repository';
-import { FavoritesRepository } from '../favorites/favorites.repository';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import { FavoritesService } from '../favorites/favorites.service';
+import { Track } from '../tracks/entities/track.entity';
 
 @Injectable()
 export class AlbumsService {
@@ -14,8 +14,9 @@ export class AlbumsService {
     private readonly albumFactory: AlbumFactory,
     @InjectRepository(Album)
     private readonly albumsRepository: Repository<Album>,
-    private readonly favoritesRepository: FavoritesRepository,
-    private readonly tracksRepository: TracksRepository,
+    private readonly favoritesService: FavoritesService,
+    @InjectRepository(Track)
+    private readonly tracksRepository: Repository<Track>,
   ) {}
 
   public async createAlbum(createAlbumDto: CreateAlbumDto): Promise<Album> {
@@ -53,16 +54,23 @@ export class AlbumsService {
     return await this.albumsRepository.save(album);
   }
 
-  private deleteAlbumRelations(albumId: string) {
-    this.tracksRepository.tracks.map((track) => {
-      if (track.albumId === albumId) {
-        track.albumId = null;
-      }
+  private async deleteAlbumRelations(albumId: string) {
+    const tracks = await this.tracksRepository.find({
+      where: {
+        albumId: albumId,
+      },
     });
 
-    this.favoritesRepository.favorites.albums =
-      this.favoritesRepository.favorites.albums.filter(
-        (album) => album !== albumId,
-      );
+    for (const track of tracks) {
+      track.albumId = null;
+
+      await this.tracksRepository.save(track);
+    }
+
+    const favorites = await this.favoritesService.getFavoritesFromDb();
+
+    favorites.albums = favorites.tracks.filter((album) => album !== albumId);
+
+    await this.favoritesService.saveFavorites(favorites);
   }
 }

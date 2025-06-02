@@ -1,7 +1,13 @@
+import { Column, Entity } from 'typeorm';
+
+@Entity()
 export class Favorites {
-  public artists: string[] = [];
+  @Column({ default: [] })
+  public artists: string[];
 
-  public albums: string[] = [];
+  @Column({ default: [] })
+  public albums: string[];
 
-  public tracks: string[] = [];
+  @Column({ default: [] })
+  public tracks: string[];
 }

@@ -4,14 +4,14 @@ import { TrackFactory } from './track.factory';
 import { CreateTrackDto } from './dtos/track.create.dto';
 import { UpdateTrackDto } from './dtos/track.update.dto';
 import { Track } from './entities/track.entity';
-import { FavoritesRepository } from '../favorites/favorites.repository';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import { FavoritesService } from '../favorites/favorites.service';
 
 @Injectable()
 export class TracksService {
   constructor(
-    private readonly favoritesRepository: FavoritesRepository,
+    private readonly favoritesService: FavoritesService,
     private readonly trackFactory: TrackFactory,
     @InjectRepository(Track)
     private readonly tracksRepository: Repository<Track>,
@@ -53,10 +53,11 @@ export class TracksService {
     return await this.tracksRepository.save(track);
   }
 
-  private deleteTrackRelations(trackId: string) {
-    this.favoritesRepository.favorites.tracks =
-      this.favoritesRepository.favorites.tracks.filter(
-        (track) => track !== trackId,
-      );
+  private async deleteTrackRelations(trackId: string): Promise<void> {
+    const favorites = await this.favoritesService.getFavoritesFromDb();
+
+    favorites.tracks = favorites.tracks.filter((track) => track !== trackId);
+
+    await this.favoritesService.saveFavorites(favorites);
   }
 }

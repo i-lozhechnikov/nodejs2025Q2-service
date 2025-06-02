@@ -1,5 +1,4 @@
 import { Injectable } from '@nestjs/common';
-import { FavoritesRepository } from './favorites.repository';
 import { Favorites } from './entities/favorites.entity';
 import { FavoritesResponse } from './dtos/favorites.response.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -15,39 +14,94 @@ export class FavoritesService {
     private readonly albumsRepository: Repository<Album>,
     @InjectRepository(Artist)
     private readonly artistsRepository: Repository<Artist>,
-    private readonly favoritesRepository: FavoritesRepository,
+    @InjectRepository(Favorites)
+    private readonly favoritesRepository: Repository<Favorites>,
     @InjectRepository(Track)
     private readonly tracksRepository: Repository<Track>,
   ) {}
 
-  public addAlbum(albumId: string): void {
-    this.favoritesRepository.addAlbum(albumId);
+  public async addAlbum(albumId: string): Promise<void> {
+    const favorites = await this.getFavoritesFromDb();
+
+    if (!favorites.albums.find((album) => album === albumId)) {
+      favorites.albums.push(albumId);
+    }
+
+    await this.favoritesRepository.save(favorites);
   }
 
-  public addArtist(artistId: string): void {
-    this.favoritesRepository.addArtist(artistId);
+  public async addArtist(artistId: string): Promise<void> {
+    const favorites = await this.getFavoritesFromDb();
+
+    if (!favorites.artists.find((artist) => artist === artistId)) {
+      favorites.artists.push(artistId);
+    }
+
+    await this.favoritesRepository.save(favorites);
   }
 
-  public addTrack(trackId: string): void {
-    this.favoritesRepository.addTrack(trackId);
+  public async addTrack(trackId: string): Promise<void> {
+    const favorites = await this.getFavoritesFromDb();
+
+    if (!favorites.tracks.find((track) => track === trackId)) {
+      favorites.tracks.push(trackId);
+    }
+
+    await this.favoritesRepository.save(favorites);
   }
 
-  public deleteAlbum(albumId: string): void {
-    this.favoritesRepository.deleteAlbum(albumId);
+  public async deleteAlbum(albumId: string): Promise<void> {
+    const favorites = await this.getFavoritesFromDb();
+
+    const albumIndex = favorites.albums.findIndex((album) => album === albumId);
+
+    if (albumIndex !== -1) {
+      favorites.albums.splice(albumIndex, 1);
+    }
+
+    await this.favoritesRepository.save(favorites);
   }
 
-  public deleteArtist(artistId: string): void {
-    this.favoritesRepository.deleteArtist(artistId);
+  public async deleteArtist(artistId: string): Promise<void> {
+    const favorites = await this.getFavoritesFromDb();
+
+    const artistIndex = favorites.artists.findIndex(
+      (artist) => artist === artistId,
+    );
+
+    if (artistIndex !== -1) {
+      favorites.artists.splice(artistIndex, 1);
+    }
+
+    await this.favoritesRepository.save(favorites);
   }
 
-  public deleteTrack(trackId: string): void {
-    this.favoritesRepository.deleteTrack(trackId);
+  public async deleteTrack(trackId: string): Promise<void> {
+    const favorites = await this.getFavoritesFromDb();
+
+    const trackIndex = favorites.tracks.findIndex((track) => track === trackId);
+
+    if (trackIndex !== -1) {
+      favorites.tracks.splice(trackIndex, 1);
+    }
+
+    await this.favoritesRepository.save(favorites);
   }
 
   public async getFavorites(): Promise<FavoritesResponse> {
-    const favorites = this.favoritesRepository.getFavorites();
+    const favorites = await this.getFavoritesFromDb();
 
     return await this.fillFavorites(favorites);
+  }
+
+  public async getFavoritesFromDb(): Promise<Favorites> {
+    const favorites = await this.favoritesRepository.find();
+
+    return favorites[0];
+  }
+
+  public async saveFavorites(favorites: Favorites): Promise<void> {
+    await this.favoritesRepository.save(favorites);
   }
 
   private async fillFavorites(
