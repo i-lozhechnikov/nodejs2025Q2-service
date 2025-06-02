@@ -23,6 +23,12 @@ npm install
 cp .env.example .env
 ```
 
+## Crete Docker network
+
+```
+docker network create library
+```
+
 ## Running application
 
 ```
