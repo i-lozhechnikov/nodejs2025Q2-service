@@ -1,46 +1,56 @@
 import { Injectable } from '@nestjs/common';
 
 import { TrackFactory } from './track.factory';
-import { TracksRepository } from './tracks.repository';
 import { CreateTrackDto } from './dtos/track.create.dto';
 import { UpdateTrackDto } from './dtos/track.update.dto';
 import { Track } from './entities/track.entity';
 import { FavoritesRepository } from '../favorites/favorites.repository';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
 
 @Injectable()
 export class TracksService {
   constructor(
     private readonly favoritesRepository: FavoritesRepository,
     private readonly trackFactory: TrackFactory,
-    private readonly tracksRepository: TracksRepository,
+    @InjectRepository(Track)
+    private readonly tracksRepository: Repository<Track>,
   ) {}
 
-  public createTrack(createTrackDto: CreateTrackDto): Track {
+  public async createTrack(createTrackDto: CreateTrackDto): Promise<Track> {
     const track = this.trackFactory.create(createTrackDto);
 
-    this.tracksRepository.create(track);
+    await this.tracksRepository.save(track);
 
     return track;
   }
 
-  public deleteTrack(trackId: string): void {
-    this.tracksRepository.delete(trackId);
+  public async deleteTrack(trackId: string): Promise<void> {
+    await this.tracksRepository.delete(trackId);
 
     this.deleteTrackRelations(trackId);
   }
 
-  public getTrack(trackId: string): Track {
-    return this.tracksRepository.findById(trackId);
+  public async getTrack(trackId: string): Promise<Track> {
+    return await this.tracksRepository.findOneBy({ id: trackId });
   }
 
-  public getTracks(): Track[] {
-    return this.tracksRepository.findAll();
+  public async getTracks(): Promise<Track[]> {
+    return await this.tracksRepository.find();
   }
 
-  public updateTrack(trackId: string, updateTrackDto: UpdateTrackDto): Track {
-    const track = this.tracksRepository.findById(trackId);
+  public async updateTrack(
+    trackId: string,
+    updateTrackDto: UpdateTrackDto,
+  ): Promise<Track> {
+    const track = await this.tracksRepository.findOneBy({ id: trackId });
 
-    return this.tracksRepository.update(track, updateTrackDto);
+    track.name = updateTrackDto.name ?? track.name;
+    track.albumId = updateTrackDto.albumId ?? track.albumId;
+    track.artistId = updateTrackDto.artistId ?? track.artistId;
+    track.duration = updateTrackDto.duration ?? track.duration;
+
+    return await this.tracksRepository.save(track);
   }
 
   private deleteTrackRelations(trackId: string) {

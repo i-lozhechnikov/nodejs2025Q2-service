@@ -23,31 +23,40 @@ export class TracksController {
 
   @Post()
   @HttpCode(HttpStatus.CREATED)
-  public createTrack(@Body() createTrackDto: CreateTrackDto): Track {
-    return this.tracksService.createTrack(createTrackDto);
+  public async createTrack(
+    @Body() createTrackDto: CreateTrackDto,
+  ): Promise<Track> {
+    return await this.tracksService.createTrack(createTrackDto);
   }
 
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
-  public deleteTrack(@Param() trackIdParamDto: TrackIdParamDto): void {
-    return this.tracksService.deleteTrack(trackIdParamDto.id);
+  public async deleteTrack(
+    @Param() trackIdParamDto: TrackIdParamDto,
+  ): Promise<void> {
+    return await this.tracksService.deleteTrack(trackIdParamDto.id);
   }
 
   @Get(':id')
-  public getTrack(@Param() trackIdParamDto: TrackIdParamDto): Track {
-    return this.tracksService.getTrack(trackIdParamDto.id);
+  public async getTrack(
+    @Param() trackIdParamDto: TrackIdParamDto,
+  ): Promise<Track> {
+    return await this.tracksService.getTrack(trackIdParamDto.id);
   }
 
   @Get()
-  public getTracks(): Track[] {
-    return this.tracksService.getTracks();
+  public async getTracks(): Promise<Track[]> {
+    return await this.tracksService.getTracks();
   }
 
   @Put(':id')
-  public updateTrack(
+  public async updateTrack(
     @Param() trackIdParamDto: TrackIdParamDto,
     @Body() updateTrackDto: UpdateTrackDto,
-  ): Track {
-    return this.tracksService.updateTrack(trackIdParamDto.id, updateTrackDto);
+  ): Promise<Track> {
+    return await this.tracksService.updateTrack(
+      trackIdParamDto.id,
+      updateTrackDto,
+    );
   }
 }
