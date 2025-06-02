@@ -3,14 +3,17 @@ import { FavoritesRepository } from './favorites.repository';
 import { Favorites } from './entities/favorites.entity';
 import { FavoritesResponse } from './dtos/favorites.response.dto';
 import { AlbumsRepository } from '../albums/albums.repository';
-import { ArtistsRepository } from '../artists/artists.repository';
 import { TracksRepository } from '../tracks/tracks.repository';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Artist } from '../artists/entities/artists.entity';
+import { Repository } from 'typeorm';
 
 @Injectable()
 export class FavoritesService {
   constructor(
     private readonly albumsRepository: AlbumsRepository,
-    private readonly artistsRepository: ArtistsRepository,
+    @InjectRepository(Artist)
+    private readonly artistsRepository: Repository<Artist>,
     private readonly favoritesRepository: FavoritesRepository,
     private readonly tracksRepository: TracksRepository,
   ) {}
@@ -39,13 +42,15 @@ export class FavoritesService {
     this.favoritesRepository.deleteTrack(trackId);
   }
 
-  public getFavorites(): FavoritesResponse {
+  public async getFavorites(): Promise<FavoritesResponse> {
     const favorites = this.favoritesRepository.getFavorites();
 
-    return this.fillFavorites(favorites);
+    return await this.fillFavorites(favorites);
   }
 
-  private fillFavorites(favorites: Favorites): FavoritesResponse {
+  private async fillFavorites(
+    favorites: Favorites,
+  ): Promise<FavoritesResponse> {
     const favoritesResponse = new FavoritesResponse();
 
     for (const albumId of favorites.albums) {
@@ -53,7 +58,9 @@ export class FavoritesService {
     }
 
     for (const artistId of favorites.artists) {
-      favoritesResponse.artists.push(this.artistsRepository.findById(artistId));
+      const artist = await this.artistsRepository.findOneBy({ id: artistId });
+
+      favoritesResponse.artists.push(artist);
     }
 
     for (const trackId of favorites.tracks) {

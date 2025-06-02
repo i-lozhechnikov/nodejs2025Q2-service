@@ -1,5 +1,4 @@
 import { Injectable } from '@nestjs/common';
-import { ArtistsRepository } from './artists.repository';
 import { Artist } from './entities/artists.entity';
 import { CreateArtistDto } from './dtos/artist.create.dto';
 import { UpdateArtistDto } from './dtos/artist.update.dto';
@@ -7,46 +6,52 @@ import { ArtistFactory } from './artist.factory';
 import { TracksRepository } from '../tracks/tracks.repository';
 import { AlbumsRepository } from '../albums/albums.repository';
 import { FavoritesRepository } from '../favorites/favorites.repository';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
 
 @Injectable()
 export class ArtistsService {
   constructor(
     private readonly albumsRepository: AlbumsRepository,
     private readonly artistFactory: ArtistFactory,
-    private readonly artistsRepository: ArtistsRepository,
+    @InjectRepository(Artist)
+    private readonly artistsRepository: Repository<Artist>,
     private readonly tracksRepository: TracksRepository,
     private readonly favoritesRepository: FavoritesRepository,
   ) {}
 
-  public createArtist(createArtistDto: CreateArtistDto): Artist {
+  public async createArtist(createArtistDto: CreateArtistDto): Promise<Artist> {
     const artist = this.artistFactory.create(createArtistDto);
 
-    this.artistsRepository.create(artist);
+    await this.artistsRepository.save(artist);
 
     return artist;
   }
 
-  public deleteArtist(artistId: string): void {
-    this.artistsRepository.delete(artistId);
+  public async deleteArtist(artistId: string): Promise<void> {
+    await this.artistsRepository.delete(artistId);
 
     this.deleteArtistRelations(artistId);
   }
 
-  public getArtist(artistId: string): Artist {
-    return this.artistsRepository.findById(artistId);
+  public async getArtist(artistId: string): Promise<Artist> {
+    return this.artistsRepository.findOneBy({ id: artistId });
   }
 
-  public getArtists(): Artist[] {
-    return this.artistsRepository.findAll();
+  public async getArtists(): Promise<Artist[]> {
+    return await this.artistsRepository.find();
   }
 
-  public updateArtist(
+  public async updateArtist(
     artistId: string,
     updateArtistDto: UpdateArtistDto,
-  ): Artist {
-    const artist = this.artistsRepository.findById(artistId);
+  ): Promise<Artist> {
+    const artist = await this.artistsRepository.findOneBy({ id: artistId });
 
-    return this.artistsRepository.update(artist, updateArtistDto);
+    artist.name = updateArtistDto.name ?? artist.name;
+    artist.grammy = updateArtistDto.grammy ?? artist.grammy;
+
+    return this.artistsRepository.save(artist);
   }
 
   private deleteArtistRelations(artistId: string) {

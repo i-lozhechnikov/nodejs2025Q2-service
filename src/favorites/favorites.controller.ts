@@ -76,7 +76,7 @@ export class FavoritesController {
   }
 
   @Get()
-  public getFavorites(): FavoritesResponse {
-    return this.favoritesService.getFavorites();
+  public async getFavorites(): Promise<FavoritesResponse> {
+    return await this.favoritesService.getFavorites();
   }
 }

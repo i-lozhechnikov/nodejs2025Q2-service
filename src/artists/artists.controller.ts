@@ -23,31 +23,37 @@ export class ArtistsController {
 
   @Post()
   @HttpCode(HttpStatus.CREATED)
-  public createArtist(@Body() createArtistDto: CreateArtistDto): Artist {
+  public async createArtist(
+    @Body() createArtistDto: CreateArtistDto,
+  ): Promise<Artist> {
     return this.artistsService.createArtist(createArtistDto);
   }
 
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
-  public deleteArtist(@Param() artistIdParamDto: ArtistIdParamDto): void {
+  public async deleteArtist(
+    @Param() artistIdParamDto: ArtistIdParamDto,
+  ): Promise<void> {
     return this.artistsService.deleteArtist(artistIdParamDto.id);
   }
 
   @Get(':id')
-  public getArtist(@Param() artistIdParamDto: ArtistIdParamDto): Artist {
+  public async getArtist(
+    @Param() artistIdParamDto: ArtistIdParamDto,
+  ): Promise<Artist> {
     return this.artistsService.getArtist(artistIdParamDto.id);
   }
 
   @Get()
-  public getArtists(): Artist[] {
+  public async getArtists(): Promise<Artist[]> {
     return this.artistsService.getArtists();
   }
 
   @Put(':id')
-  public updateArtist(
+  public async updateArtist(
     @Param() artistIdParamDto: ArtistIdParamDto,
     @Body() updateArtistDto: UpdateArtistDto,
-  ): Artist {
+  ): Promise<Artist> {
     return this.artistsService.updateArtist(
       artistIdParamDto.id,
       updateArtistDto,
