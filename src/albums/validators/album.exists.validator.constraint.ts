@@ -4,12 +4,17 @@ import {
   ValidatorConstraint,
   ValidatorConstraintInterface,
 } from 'class-validator';
-import { AlbumsRepository } from '../albums.repository';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Album } from '../entities/album.entity';
+import { Repository } from 'typeorm';
 
 @ValidatorConstraint({ async: true })
 @Injectable()
 export class IsAlbumExistsConstraint implements ValidatorConstraintInterface {
-  constructor(private readonly albumsRepository: AlbumsRepository) {}
+  constructor(
+    @InjectRepository(Album)
+    private readonly albumsRepository: Repository<Album>,
+  ) {}
 
   public async validate(
     value: any,
@@ -17,7 +22,9 @@ export class IsAlbumExistsConstraint implements ValidatorConstraintInterface {
   ): Promise<boolean> {
     const albumId = value as string;
 
-    return !!this.albumsRepository.isAlbumExists(albumId);
+    const album = this.albumsRepository.findOneBy({ id: albumId });
+
+    return !!album;
   }
 
   public defaultMessage(_validationArguments: ValidationArguments): string {

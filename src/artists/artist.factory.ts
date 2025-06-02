@@ -7,7 +7,6 @@ export class ArtistFactory {
   public create(createArtistDto: CreateArtistDto) {
     const artist = new Artist();
 
-    artist.id = crypto.randomUUID();
     artist.name = createArtistDto.name;
     artist.grammy = createArtistDto.grammy;
 

@@ -2,16 +2,17 @@ import { Injectable } from '@nestjs/common';
 import { FavoritesRepository } from './favorites.repository';
 import { Favorites } from './entities/favorites.entity';
 import { FavoritesResponse } from './dtos/favorites.response.dto';
-import { AlbumsRepository } from '../albums/albums.repository';
 import { TracksRepository } from '../tracks/tracks.repository';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Artist } from '../artists/entities/artists.entity';
 import { Repository } from 'typeorm';
+import { Album } from '../albums/entities/album.entity';
 
 @Injectable()
 export class FavoritesService {
   constructor(
-    private readonly albumsRepository: AlbumsRepository,
+    @InjectRepository(Album)
+    private readonly albumsRepository: Repository<Album>,
     @InjectRepository(Artist)
     private readonly artistsRepository: Repository<Artist>,
     private readonly favoritesRepository: FavoritesRepository,
@@ -54,7 +55,9 @@ export class FavoritesService {
     const favoritesResponse = new FavoritesResponse();
 
     for (const albumId of favorites.albums) {
-      favoritesResponse.albums.push(this.albumsRepository.findById(albumId));
+      const album = await this.albumsRepository.findOneBy({ id: albumId });
+
+      favoritesResponse.albums.push(album);
     }
 
     for (const artistId of favorites.artists) {
