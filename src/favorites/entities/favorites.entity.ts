@@ -1,13 +1,16 @@
-import { Column, Entity } from 'typeorm';
+import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity()
 export class Favorites {
-  @Column({ default: [] })
+  @PrimaryGeneratedColumn('uuid')
+  public id: string;
+
+  @Column('text', { array: true, default: () => "'{}'" })
   public artists: string[];
 
-  @Column({ default: [] })
+  @Column('text', { array: true, default: () => "'{}'" })
   public albums: string[];
 
-  @Column({ default: [] })
+  @Column('text', { array: true, default: () => "'{}'" })
   public tracks: string[];
 }

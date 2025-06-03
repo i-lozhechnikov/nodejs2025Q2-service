@@ -32,7 +32,12 @@ docker network create library
 ## Running application
 
 ```
-npm start
+docker compose up
+```
+
+## Running migrations
+```
+docker exec -it nodejs2025q2-service-node-1  npm migration:run
 ```
 
 After starting the app on port (4000 as default) you can open
