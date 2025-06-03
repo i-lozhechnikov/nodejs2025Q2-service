@@ -22,6 +22,7 @@ RUN npm install --frozen-lockfile --production=true
 
 COPY migrations ./migrations
 COPY src ./src
+COPY doc ./doc
 
 RUN npm run build
 
