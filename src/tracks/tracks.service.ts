@@ -28,7 +28,7 @@ export class TracksService {
   public async deleteTrack(trackId: string): Promise<void> {
     await this.tracksRepository.delete(trackId);
 
-    this.deleteTrackRelations(trackId);
+    await this.deleteTrackRelations(trackId);
   }
 
   public async getTrack(trackId: string): Promise<Track> {

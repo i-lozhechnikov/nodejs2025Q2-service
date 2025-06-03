@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import {
+  isUUID,
   ValidationArguments,
   ValidatorConstraint,
   ValidatorConstraintInterface,
@@ -24,6 +25,10 @@ export class IsArtistExistsConstraint implements ValidatorConstraintInterface {
 
     if (!artistId) {
       return true;
+    }
+
+    if (!isUUID(artistId)) {
+      return false;
     }
 
     const artist = await this.artistsRepository.findOneBy({ id: artistId });

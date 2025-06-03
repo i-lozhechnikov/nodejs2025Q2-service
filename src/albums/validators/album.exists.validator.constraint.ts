@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import {
+  isUUID,
   ValidationArguments,
   ValidatorConstraint,
   ValidatorConstraintInterface,
@@ -22,7 +23,15 @@ export class IsAlbumExistsConstraint implements ValidatorConstraintInterface {
   ): Promise<boolean> {
     const albumId = value as string;
 
-    const album = this.albumsRepository.findOneBy({ id: albumId });
+    if (!albumId) {
+      return true;
+    }
+
+    if (!isUUID(albumId)) {
+      return false;
+    }
+
+    const album = await this.albumsRepository.findOneBy({ id: albumId });
 
     return !!album;
   }

@@ -21,8 +21,8 @@ export class User {
   public version: number;
 
   @CreateDateColumn()
-  public createdAt: number;
+  public createdAt: Date;
 
   @UpdateDateColumn()
-  public updatedAt: number;
+  public updatedAt: Date;
 }

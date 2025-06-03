@@ -36,8 +36,12 @@ export class UsersService {
     return this.mapToUserDto(user);
   }
 
-  public async getUsers(): Promise<User[]> {
-    return await this.usersRepository.find();
+  public async getUsers(): Promise<UserDto[]> {
+    const users = await this.usersRepository.find();
+
+    return users.map((user) => {
+      return this.mapToUserDto(user);
+    });
   }
 
   public async updateUserPassword(
@@ -67,8 +71,8 @@ export class UsersService {
     userDto.id = user.id;
     userDto.login = user.login;
     userDto.version = user.version;
-    userDto.createdAt = user.createdAt;
-    userDto.updatedAt = user.updatedAt;
+    userDto.createdAt = user.createdAt.getTime();
+    userDto.updatedAt = user.updatedAt.getTime();
 
     return userDto;
   }

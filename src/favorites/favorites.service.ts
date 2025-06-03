@@ -25,9 +25,9 @@ export class FavoritesService {
 
     if (!favorites.albums.find((album) => album === albumId)) {
       favorites.albums.push(albumId);
-    }
 
-    await this.favoritesRepository.save(favorites);
+      await this.favoritesRepository.save(favorites);
+    }
   }
 
   public async addArtist(artistId: string): Promise<void> {
@@ -35,9 +35,9 @@ export class FavoritesService {
 
     if (!favorites.artists.find((artist) => artist === artistId)) {
       favorites.artists.push(artistId);
-    }
 
-    await this.favoritesRepository.save(favorites);
+      await this.favoritesRepository.save(favorites);
+    }
   }
 
   public async addTrack(trackId: string): Promise<void> {
@@ -45,9 +45,9 @@ export class FavoritesService {
 
     if (!favorites.tracks.find((track) => track === trackId)) {
       favorites.tracks.push(trackId);
-    }
 
-    await this.favoritesRepository.save(favorites);
+      await this.favoritesRepository.save(favorites);
+    }
   }
 
   public async deleteAlbum(albumId: string): Promise<void> {
@@ -57,9 +57,9 @@ export class FavoritesService {
 
     if (albumIndex !== -1) {
       favorites.albums.splice(albumIndex, 1);
-    }
 
-    await this.favoritesRepository.save(favorites);
+      await this.favoritesRepository.save(favorites);
+    }
   }
 
   public async deleteArtist(artistId: string): Promise<void> {
@@ -71,9 +71,9 @@ export class FavoritesService {
 
     if (artistIndex !== -1) {
       favorites.artists.splice(artistIndex, 1);
-    }
 
-    await this.favoritesRepository.save(favorites);
+      await this.favoritesRepository.save(favorites);
+    }
   }
 
   public async deleteTrack(trackId: string): Promise<void> {
@@ -83,9 +83,9 @@ export class FavoritesService {
 
     if (trackIndex !== -1) {
       favorites.tracks.splice(trackIndex, 1);
-    }
 
-    await this.favoritesRepository.save(favorites);
+      await this.favoritesRepository.save(favorites);
+    }
   }
 
   public async getFavorites(): Promise<FavoritesResponse> {

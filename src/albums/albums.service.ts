@@ -30,7 +30,7 @@ export class AlbumsService {
   public async deleteAlbum(albumId: string): Promise<void> {
     await this.albumsRepository.delete(albumId);
 
-    this.deleteAlbumRelations(albumId);
+    await this.deleteAlbumRelations(albumId);
   }
 
   public async getAlbum(albumId: string): Promise<Album> {
@@ -69,7 +69,7 @@ export class AlbumsService {
 
     const favorites = await this.favoritesService.getFavoritesFromDb();
 
-    favorites.albums = favorites.tracks.filter((album) => album !== albumId);
+    favorites.albums = favorites.albums.filter((album) => album !== albumId);
 
     await this.favoritesService.saveFavorites(favorites);
   }

@@ -9,8 +9,6 @@ export class UserFactory {
 
     user.login = createUserDto.login;
     user.password = createUserDto.password;
-    user.createdAt = Date.now();
-    user.updatedAt = Date.now();
 
     return user;
   }

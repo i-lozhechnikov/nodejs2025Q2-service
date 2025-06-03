@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import {
+  isUUID,
   ValidationArguments,
   ValidatorConstraint,
   ValidatorConstraintInterface,
@@ -22,7 +23,11 @@ export class IsTrackExistsConstraint implements ValidatorConstraintInterface {
   ): Promise<boolean> {
     const trackId = value as string;
 
-    const track = this.tracksRepository.findOneBy({ id: trackId });
+    if (!isUUID(trackId)) {
+      return false;
+    }
+
+    const track = await this.tracksRepository.findOneBy({ id: trackId });
 
     return !!track;
   }

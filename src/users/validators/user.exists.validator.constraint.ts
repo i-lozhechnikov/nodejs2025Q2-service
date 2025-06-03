@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import {
+  isUUID,
   ValidationArguments,
   ValidatorConstraint,
   ValidatorConstraintInterface,
@@ -18,12 +19,16 @@ export class IsUserExistsConstraint implements ValidatorConstraintInterface {
   ) {}
 
   public async validate(
-    _value: any,
-    validationArguments: ValidationArguments,
+    value: any,
+    _validationArguments: ValidationArguments,
   ): Promise<boolean> {
-    const userId = validationArguments?.object as UserIdParamDto;
+    const userId = value as string;
 
-    const user = await this.usersRepository.findOneBy({ id: userId.id });
+    if (!isUUID(userId)) {
+      return false;
+    }
+
+    const user = await this.usersRepository.findOneBy({ id: userId });
 
     return !!user;
   }
