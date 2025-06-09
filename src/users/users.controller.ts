@@ -23,31 +23,37 @@ export class UsersController {
 
   @Post()
   @HttpCode(HttpStatus.CREATED)
-  public createUser(@Body() createUserDto: CreateUserDto): UserDto {
+  public async createUser(
+    @Body() createUserDto: CreateUserDto,
+  ): Promise<UserDto> {
     return this.usersService.createUser(createUserDto);
   }
 
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
-  public deleteUser(@Param() userIdParamDto: UserIdParamDto): void {
+  public async deleteUser(
+    @Param() userIdParamDto: UserIdParamDto,
+  ): Promise<void> {
     return this.usersService.deleteUser(userIdParamDto.id);
   }
 
   @Get(':id')
-  public getUser(@Param() userIdParamDto: UserIdParamDto): UserDto {
+  public async getUser(
+    @Param() userIdParamDto: UserIdParamDto,
+  ): Promise<UserDto> {
     return this.usersService.getUser(userIdParamDto.id);
   }
 
   @Get()
-  public getUsers(): UserDto[] {
+  public async getUsers(): Promise<UserDto[]> {
     return this.usersService.getUsers();
   }
 
   @Put(':id')
-  public updateUserPassword(
+  public async updateUserPassword(
     @Param() userIdParamDto: UserIdParamDto,
     @Body() updateUserPasswordDto: UpdatePasswordDto,
-  ): UserDto {
+  ): Promise<UserDto> {
     return this.usersService.updateUserPassword(
       userIdParamDto.id,
       updateUserPasswordDto,

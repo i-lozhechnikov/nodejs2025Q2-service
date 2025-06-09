@@ -1,24 +1,35 @@
 import { Injectable } from '@nestjs/common';
 import {
+  isUUID,
   ValidationArguments,
   ValidatorConstraint,
   ValidatorConstraintInterface,
 } from 'class-validator';
-import { UsersRepository } from '../users.repository';
-import { UserIdParamDto } from '../dtos/user.id-param.dto';
+import { Repository } from 'typeorm';
+import { User } from '../entities/user.entity';
+import { InjectRepository } from '@nestjs/typeorm';
 
 @ValidatorConstraint({ async: true })
 @Injectable()
 export class IsUserExistsConstraint implements ValidatorConstraintInterface {
-  constructor(private readonly usersRepository: UsersRepository) {}
+  constructor(
+    @InjectRepository(User)
+    private readonly usersRepository: Repository<User>,
+  ) {}
 
   public async validate(
-    _value: any,
-    validationArguments: ValidationArguments,
+    value: any,
+    _validationArguments: ValidationArguments,
   ): Promise<boolean> {
-    const userId = validationArguments?.object as UserIdParamDto;
+    const userId = value as string;
 
-    return !!this.usersRepository.isUserExists(userId.id);
+    if (!isUUID(userId)) {
+      return false;
+    }
+
+    const user = await this.usersRepository.findOneBy({ id: userId });
+
+    return !!user;
   }
 
   public defaultMessage(_validationArguments: ValidationArguments): string {

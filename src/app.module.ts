@@ -7,6 +7,8 @@ import { ArtistsModule } from './artists/artists.module';
 import { AlbumsModule } from './albums/albums.module';
 import { TracksModule } from './tracks/tracks.module';
 import { FavoritesModule } from './favorites/favorites.module';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { dataSourceOptions } from './database/database.data-source';
 
 @Module({
   imports: [
@@ -18,6 +20,7 @@ import { FavoritesModule } from './favorites/favorites.module';
     ConfigModule.forRoot({
       isGlobal: true,
     }),
+    TypeOrmModule.forRoot(dataSourceOptions),
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -25,13 +25,37 @@ cp .env.example .env
 
 ## Running application
 
+### Start
 ```
-npm start
+docker compose up -d
 ```
 
+### Stop
+```
+docker compose down
+```
+
+## Running migrations
+Run the following command to execute database migrations inside the running container:
+```
+docker compose exec node npm run migration:run
+```
+
+## Swagger
 After starting the app on port (4000 as default) you can open
 in your browser OpenAPI documentation by typing http://localhost:4000/doc/.
 For more information about OpenAPI/Swagger please visit https://swagger.io/.
+
+## Check vulnerabilities
+```
+npm run audit
+```
+
+## Pull docker image
+Built image of nest application can be downloaded with the next command:
+```
+docker pull ilozhechnikov/nodejs2025q2:1.0
+```
 
 ## Testing
 

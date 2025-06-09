@@ -1,15 +1,21 @@
 import { Injectable } from '@nestjs/common';
 import {
+  isUUID,
   ValidationArguments,
   ValidatorConstraint,
   ValidatorConstraintInterface,
 } from 'class-validator';
-import { TracksRepository } from '../tracks.repository';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Track } from '../entities/track.entity';
+import { Repository } from 'typeorm';
 
 @ValidatorConstraint({ async: true })
 @Injectable()
 export class IsTrackExistsConstraint implements ValidatorConstraintInterface {
-  constructor(private readonly tracksRepository: TracksRepository) {}
+  constructor(
+    @InjectRepository(Track)
+    private readonly tracksRepository: Repository<Track>,
+  ) {}
 
   public async validate(
     value: any,
@@ -17,7 +23,13 @@ export class IsTrackExistsConstraint implements ValidatorConstraintInterface {
   ): Promise<boolean> {
     const trackId = value as string;
 
-    return !!this.tracksRepository.isTrackExists(trackId);
+    if (!isUUID(trackId)) {
+      return false;
+    }
+
+    const track = await this.tracksRepository.findOneBy({ id: trackId });
+
+    return !!track;
   }
 
   public defaultMessage(_validationArguments: ValidationArguments): string {

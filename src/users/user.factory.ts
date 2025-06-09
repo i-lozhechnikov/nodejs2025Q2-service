@@ -7,11 +7,8 @@ export class UserFactory {
   public create(createUserDto: CreateUserDto) {
     const user = new User();
 
-    user.id = crypto.randomUUID();
     user.login = createUserDto.login;
     user.password = createUserDto.password;
-    user.createdAt = Date.now();
-    user.updatedAt = Date.now();
 
     return user;
   }

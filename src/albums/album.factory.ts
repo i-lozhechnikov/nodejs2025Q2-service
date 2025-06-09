@@ -7,7 +7,6 @@ export class AlbumFactory {
   public create(createAlbumDto: CreateAlbumDto) {
     const album = new Album();
 
-    album.id = crypto.randomUUID();
     album.name = createAlbumDto.name;
     album.year = createAlbumDto.year;
     album.artistId = createAlbumDto.artistId;

@@ -23,31 +23,40 @@ export class AlbumsController {
 
   @Post()
   @HttpCode(HttpStatus.CREATED)
-  public createAlbum(@Body() createAlbumDto: CreateAlbumDto): Album {
-    return this.albumsService.createAlbum(createAlbumDto);
+  public async createAlbum(
+    @Body() createAlbumDto: CreateAlbumDto,
+  ): Promise<Album> {
+    return await this.albumsService.createAlbum(createAlbumDto);
   }
 
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
-  public deleteAlbum(@Param() albumIdParamDto: AlbumIdParamDto): void {
-    return this.albumsService.deleteAlbum(albumIdParamDto.id);
+  public async deleteAlbum(
+    @Param() albumIdParamDto: AlbumIdParamDto,
+  ): Promise<void> {
+    return await this.albumsService.deleteAlbum(albumIdParamDto.id);
   }
 
   @Get(':id')
-  public getAlbum(@Param() albumIdParamDto: AlbumIdParamDto): Album {
-    return this.albumsService.getAlbum(albumIdParamDto.id);
+  public async getAlbum(
+    @Param() albumIdParamDto: AlbumIdParamDto,
+  ): Promise<Album> {
+    return await this.albumsService.getAlbum(albumIdParamDto.id);
   }
 
   @Get()
-  public getAlbums(): Album[] {
-    return this.albumsService.getAlbums();
+  public async getAlbums(): Promise<Album[]> {
+    return await this.albumsService.getAlbums();
   }
 
   @Put(':id')
-  public updateAlbum(
+  public async updateAlbum(
     @Param() albumIdParamDto: AlbumIdParamDto,
     @Body() updateAlbumDto: UpdateAlbumDto,
-  ): Album {
-    return this.albumsService.updateAlbum(albumIdParamDto.id, updateAlbumDto);
+  ): Promise<Album> {
+    return await this.albumsService.updateAlbum(
+      albumIdParamDto.id,
+      updateAlbumDto,
+    );
   }
 }

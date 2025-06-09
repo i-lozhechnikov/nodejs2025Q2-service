@@ -1,7 +1,13 @@
+import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+
+@Entity()
 export class Artist {
+  @PrimaryGeneratedColumn('uuid')
   public id: string;
 
+  @Column()
   public name: string;
 
-  public grammy: boolean = false;
+  @Column({ default: false })
+  public grammy: boolean;
 }
