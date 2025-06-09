@@ -12,6 +12,7 @@ services:
     restart: unless-stopped
     volumes:
       - ./:/app
+      - ./logs:/app/logs
     depends_on:
       - postgres
 

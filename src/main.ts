@@ -7,6 +7,9 @@ import { CustomValidationPipe } from './common/custom-validation.pipe';
 import * as swaggerUi from 'swagger-ui-express';
 import * as YAML from 'yamljs';
 import * as path from 'path';
+import { LoggingService } from './common/logging.service';
+import { AllExceptionsFilter } from './common/http-exception.filter';
+import { LoggerMiddleware } from './common/logger.middleware';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -20,6 +23,20 @@ async function bootstrap() {
   const swaggerDocument = YAML.load(
     path.resolve(process.cwd(), 'doc/api.yaml'),
   );
+
+  const loggingService = app.get(LoggingService);
+
+  app.useGlobalFilters(new AllExceptionsFilter(loggingService));
+
+  process.on('uncaughtException', (err) => {
+    loggingService.error('Uncaught Exception: ' + err.message);
+    loggingService.error(err.stack || '');
+  });
+
+  process.on('unhandledRejection', (reason: any, promise) => {
+    loggingService.error('Unhandled Rejection at: ' + promise);
+    loggingService.error('Reason: ' + JSON.stringify(reason));
+  });
 
   app.use('/doc', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
