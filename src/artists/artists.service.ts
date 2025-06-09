@@ -84,7 +84,7 @@ export class ArtistsService {
     const favorites = await this.favoritesService.getFavoritesFromDb();
 
     favorites.artists = favorites.artists.filter(
-      (artist) => artist !== artistId,
+      (artist) => artist.id !== artistId,
     );
 
     await this.favoritesService.saveFavorites(favorites);

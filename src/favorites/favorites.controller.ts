@@ -7,12 +7,12 @@ import {
   Injectable,
   Post,
 } from '@nestjs/common';
-import { FavoritesResponse } from './dtos/favorites.response.dto';
 import { FavoritesService } from './favorites.service';
 import { FavoriteAlbumIdParamDto } from './dtos/favorite-album.id-param.dto';
 import { FavoriteArtistIdParamDto } from './dtos/favorite-artist.id-param.dto';
 import { FavoriteTrackIdParamDto } from './dtos/favorite-track.id-param.dto';
 import { ParamAs } from '../common/param-as.decorator';
+import { Favorites } from './entities/favorites.entity';
 
 @Injectable()
 @Controller('/favs')
@@ -76,7 +76,7 @@ export class FavoritesController {
   }
 
   @Get()
-  public async getFavorites(): Promise<FavoritesResponse> {
+  public async getFavorites(): Promise<Favorites> {
     return await this.favoritesService.getFavorites();
   }
 }

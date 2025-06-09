@@ -56,7 +56,7 @@ export class TracksService {
   private async deleteTrackRelations(trackId: string): Promise<void> {
     const favorites = await this.favoritesService.getFavoritesFromDb();
 
-    favorites.tracks = favorites.tracks.filter((track) => track !== trackId);
+    favorites.tracks = favorites.tracks.filter((track) => track.id !== trackId);
 
     await this.favoritesService.saveFavorites(favorites);
   }

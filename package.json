@@ -24,6 +24,7 @@
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "migration:run": "typeorm-ts-node-commonjs migration:run --dataSource=src/database/database.data-source.ts",
+    "migration:generate": "typeorm-ts-node-commonjs migration:generate migrations/version --dataSource=src/database/database.data-source.ts",
     "audit": "npm audit --audit-level=high"
   },
   "dependencies": {

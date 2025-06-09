@@ -25,8 +25,14 @@ cp .env.example .env
 
 ## Running application
 
+### Start
 ```
-docker compose up
+docker compose up -d
+```
+
+### Stop
+```
+docker compose down
 ```
 
 ## Running migrations

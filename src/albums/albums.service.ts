@@ -69,7 +69,7 @@ export class AlbumsService {
 
     const favorites = await this.favoritesService.getFavoritesFromDb();
 
-    favorites.albums = favorites.albums.filter((album) => album !== albumId);
+    favorites.albums = favorites.albums.filter((album) => album.id !== albumId);
 
     await this.favoritesService.saveFavorites(favorites);
   }
