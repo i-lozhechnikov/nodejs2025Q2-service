@@ -9,11 +9,13 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { dataSourceOptions } from './database/database.data-source';
 import { LoggerMiddleware } from './common/logger.middleware';
 import { LoggingService } from './common/logging.service';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
     AlbumsModule,
     ArtistsModule,
+    AuthModule,
     FavoritesModule,
     TracksModule,
     UsersModule,
