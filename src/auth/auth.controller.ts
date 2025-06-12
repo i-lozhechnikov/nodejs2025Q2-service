@@ -12,11 +12,16 @@ import { UserDto } from '../users/dtos/user.dto';
 import { LoginInput } from './dto/auth.login.input';
 import { JwtToken } from './dto/auth.jwt-token';
 import { Public } from './decorators/auth.public.decorator';
+import { RefreshTokenInput } from './dto/auth.refresh-token.input';
+import { RefreshService } from './auth.refresh.service';
 
 @Injectable()
 @Controller('/auth')
 export class AuthController {
-  constructor(private readonly authService: AuthService) {}
+  constructor(
+    private readonly authService: AuthService,
+    private readonly refreshService: RefreshService,
+  ) {}
 
   @Public()
   @Post('signup')
@@ -34,6 +39,10 @@ export class AuthController {
 
   @Public()
   @Post('refresh')
-  @HttpCode(HttpStatus.CREATED)
-  public refresh(): void {}
+  @HttpCode(HttpStatus.OK)
+  public refresh(
+    @Body() refreshTokenInput?: RefreshTokenInput,
+  ): Promise<JwtToken> {
+    return this.refreshService.refresh(refreshTokenInput);
+  }
 }

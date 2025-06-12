@@ -41,7 +41,6 @@ export class JwtAuthGuard implements CanActivate {
     }
 
     try {
-      console.log(this.jwtService);
       this.jwtService.verify(token);
 
       return true;
