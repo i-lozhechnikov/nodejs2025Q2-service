@@ -7,9 +7,8 @@ import { CustomValidationPipe } from './common/custom-validation.pipe';
 import * as swaggerUi from 'swagger-ui-express';
 import * as YAML from 'yamljs';
 import * as path from 'path';
-import { LoggingService } from './common/logging.service';
 import { AllExceptionsFilter } from './common/http-exception.filter';
-import { LoggerMiddleware } from './common/logger.middleware';
+import { LoggingService } from './common/common.logging.service';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);

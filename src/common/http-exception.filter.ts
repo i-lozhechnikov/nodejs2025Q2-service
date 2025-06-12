@@ -4,7 +4,7 @@ import {
   ArgumentsHost,
   HttpException,
 } from '@nestjs/common';
-import { LoggingService } from './logging.service';
+import { LoggingService } from './common.logging.service';
 
 @Catch()
 export class AllExceptionsFilter implements ExceptionFilter {

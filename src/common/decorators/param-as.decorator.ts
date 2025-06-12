@@ -1,5 +1,5 @@
 import { createParamDecorator, ExecutionContext } from '@nestjs/common';
-import { CustomValidationPipe } from './custom-validation.pipe';
+import { CustomValidationPipe } from '../custom-validation.pipe';
 
 export function ParamAs<T>(
   dtoClass: new () => T,

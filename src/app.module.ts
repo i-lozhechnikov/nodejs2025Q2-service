@@ -8,14 +8,16 @@ import { FavoritesModule } from './favorites/favorites.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { dataSourceOptions } from './database/database.data-source';
 import { LoggerMiddleware } from './common/logger.middleware';
-import { LoggingService } from './common/logging.service';
+import { LoggingService } from './common/common.logging.service';
 import { AuthModule } from './auth/auth.module';
+import { CommonModule } from './common/common.module';
 
 @Module({
   imports: [
     AlbumsModule,
     ArtistsModule,
     AuthModule,
+    CommonModule,
     FavoritesModule,
     TracksModule,
     UsersModule,
