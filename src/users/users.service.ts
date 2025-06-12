@@ -62,7 +62,7 @@ export class UsersService {
       id: userId,
     });
 
-    PasswordMatchValidator.isPasswordMatch(
+    await PasswordMatchValidator.isPasswordMatch(
       user,
       updateUserPasswordDto.oldPassword,
     );
