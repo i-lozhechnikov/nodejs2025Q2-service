@@ -11,7 +11,7 @@ import { FavoritesService } from './favorites.service';
 import { FavoriteAlbumIdParamDto } from './dtos/favorite-album.id-param.dto';
 import { FavoriteArtistIdParamDto } from './dtos/favorite-artist.id-param.dto';
 import { FavoriteTrackIdParamDto } from './dtos/favorite-track.id-param.dto';
-import { ParamAs } from '../common/param-as.decorator';
+import { ParamAs } from '../common/decorators/param-as.decorator';
 import { Favorites } from './entities/favorites.entity';
 
 @Injectable()

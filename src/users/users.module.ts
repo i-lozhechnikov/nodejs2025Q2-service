@@ -10,6 +10,6 @@ import { User } from './entities/user.entity';
   imports: [TypeOrmModule.forFeature([User])],
   controllers: [UsersController],
   providers: [UserFactory, UsersService, IsUserExistsConstraint],
-  exports: [TypeOrmModule],
+  exports: [IsUserExistsConstraint, TypeOrmModule, UsersService],
 })
 export class UsersModule {}

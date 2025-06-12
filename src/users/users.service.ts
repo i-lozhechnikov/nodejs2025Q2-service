@@ -7,6 +7,8 @@ import { UpdatePasswordDto } from './dtos/user.update.password.dto';
 import { PasswordMatchValidator } from './validators/users.password-match.validator';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import * as process from 'node:process';
+import * as bcrypt from 'bcryptjs';
 
 @Injectable()
 export class UsersService {
@@ -18,6 +20,8 @@ export class UsersService {
 
   public async createUser(createUserDto: CreateUserDto): Promise<UserDto> {
     const user = this.userFactory.create(createUserDto);
+
+    user.password = await this.hashPassword(createUserDto.password);
 
     await this.usersRepository.save(user);
 
@@ -36,6 +40,12 @@ export class UsersService {
     return this.mapToUserDto(user);
   }
 
+  public async getUserByLogin(login: string): Promise<User> {
+    return await this.usersRepository.findOneBy({
+      login: login,
+    });
+  }
+
   public async getUsers(): Promise<UserDto[]> {
     const users = await this.usersRepository.find();
 
@@ -52,7 +62,7 @@ export class UsersService {
       id: userId,
     });
 
-    PasswordMatchValidator.isPasswordMatch(
+    await PasswordMatchValidator.isPasswordMatch(
       user,
       updateUserPasswordDto.oldPassword,
     );
@@ -63,6 +73,10 @@ export class UsersService {
     await this.usersRepository.save(user);
 
     return this.mapToUserDto(user);
+  }
+
+  private async hashPassword(password: string): Promise<string> {
+    return await bcrypt.hash(password, parseInt(process.env.CRYPT_SALT));
   }
 
   private mapToUserDto(user: User): UserDto {

@@ -8,7 +8,6 @@ export class UserFactory {
     const user = new User();
 
     user.login = createUserDto.login;
-    user.password = createUserDto.password;
 
     return user;
   }

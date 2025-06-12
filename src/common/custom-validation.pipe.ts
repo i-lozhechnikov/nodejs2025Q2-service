@@ -8,6 +8,7 @@ import {
   UnprocessableEntityException,
 } from '@nestjs/common';
 import { FavoriteIdParamAbstract } from '../favorites/dtos/favorite.id-param.abstract.dto';
+import { LoginInput } from '../auth/dto/auth.login.input';
 
 @Injectable()
 export class CustomValidationPipe extends ValidationPipe {
@@ -24,7 +25,10 @@ export class CustomValidationPipe extends ValidationPipe {
             if (message.includes('not found')) {
               if (error.property === 'id') {
                 notFoundMessages.push(message);
-              } else if (error.target instanceof FavoriteIdParamAbstract) {
+              } else if (
+                error.target instanceof FavoriteIdParamAbstract ||
+                error.target instanceof LoginInput
+              ) {
                 unprocessableEntityMessages.push(message);
               }
 
@@ -50,20 +54,5 @@ export class CustomValidationPipe extends ValidationPipe {
         return new BadRequestException(badRequestMessages);
       },
     });
-  }
-
-  private static flattenValidationErrors(
-    validationErrors: ValidationError[],
-  ): string[] {
-    const result: string[] = [];
-    for (const error of validationErrors) {
-      if (error.constraints) {
-        result.push(...Object.values(error.constraints));
-      }
-      if (error.children?.length) {
-        result.push(...this.flattenValidationErrors(error.children));
-      }
-    }
-    return result;
   }
 }
